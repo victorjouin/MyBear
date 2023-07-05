@@ -1,5 +1,4 @@
 from typing import Any
-import n
 
 class Series:
     def __init__(self, data: list, name: str):
