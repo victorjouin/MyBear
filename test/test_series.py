@@ -1,1 +1,1 @@
-import 
+import mybear.series as series
