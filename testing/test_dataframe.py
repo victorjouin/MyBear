@@ -1,5 +1,5 @@
 import pytest
-from lib.mybear.dataframe import Dataframe
+from lib.mybear.dataframe import DataFrame as Dataframe
 from lib.mybear.series import Series
 
 
