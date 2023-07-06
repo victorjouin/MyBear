@@ -15,18 +15,13 @@ class Series:
 
     # Display information about the series
     def __repr__(self):
-        if isinstance(self.data, list):
-            return f"Series({self.data}, {self.name})"
+        return f"Series({self.data}, name={self.name})"
 
     # Get the value of the series
 
     def iloc(self, i) -> Any:
-        # Explication de la fonction iloc
-        # Si i est un entier, on retourne la valeur de la liste à l'index i
-        # Si i est une liste, on retourne une liste de valeur de la liste à l'index i
-        # Si i est un slice, on retourne une liste de valeur de la liste entre les index i.start et i.stop
         if isinstance(i, slice):
-            return Series(self.data[i.start:i.stop])
+            return list(self.data[i.start:i.stop])
         return self.data[i]
 
     def max(self):
@@ -52,3 +47,10 @@ class Series:
             if i is not None:
                 count += 1
         return count
+
+    def __eq__(self, other):
+        if isinstance(other, Series):
+            return self.data == other.data
+        return False
+
+

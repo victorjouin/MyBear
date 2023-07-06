@@ -1,85 +1,19 @@
 import csv
 import json
 
-from test.series import Series
+from .series import Series
 
 
 class Dataframe(Series):
-    """
-    A class to represent a DataFrame. Inherits from Series class.
-
-    Attributes
-    ----------
-    name : str
-        a string to name the dataframe (default is 'Dataframe')
-    data : list of Series
-        a list of Series objects representing columns in the dataframe
-    """
+    # TODO: Implement the following methods:
+    #  - min
+    #  - max
+    #  - mean
+    #  - std
+    #  - count
+    #  - iloc
 
     @staticmethod
-    def read_csv(path: str, delimiter: str = ",") -> 'Dataframe':
-        """
-        Reads a CSV file from the specified path and returns a Dataframe object.
-        Raises:
-            IndexError: If the CSV file is malformed or contains rows with different number of columns.
-        """
-        try:
-            with open(path, "r") as file:
-                reader = csv.reader(file, delimiter=delimiter)
-                headers = next(reader)
-                columns = [[] for _ in headers]
-
-                for row in reader:
-                    if len(row) != len(headers):
-                        raise IndexError("Malformed CSV file")
-                    for i, cell in enumerate(row):
-                        columns[i].append(cell)
-
-                series = [Series(col, name) for col, name in zip(columns, headers)]
-
-                return Dataframe(series)
-        except IndexError as e:
-            print(f"Error reading CSV file: {e}")
-            raise
-
-    @staticmethod
-    def read_json(path: str, orient: str = "records") -> 'Dataframe':
-        """
-        Reads a JSON file from the specified path and returns a Dataframe object.
-        JSON orientation can be either "records" or "columns".
-
-        Raises:
-            IndexError: If the JSON file is malformed or contains rows with different number of columns.
-        """
-        try:
-            with open(path, "r") as file:
-                data = json.load(file)
-
-                if orient == "records":
-                    headers = data[0].keys()
-                    columns = {header: [] for header in headers}
-
-                    for record in data:
-                        if len(record) != len(headers):
-                            raise IndexError("Row has different number of columns than the headers.")
-
-                        for key, value in record.items():
-                            columns[key].append(value)
-
-                    series = [Series(col, name) for name, col in columns.items()]
-
-                elif orient == "columns":
-                    series = [Series(values, name) for name, values in data.items()]
-
-                else:
-                    raise ValueError(f"Unsupported JSON orientation: {orient}")
-
-                return Dataframe(series)
-
-        except IndexError as e:
-            print(f"Error reading JSON file: {e}")
-            raise
-
     def __init__(self, *args, name='Dataframe'):
         data = []
         if len(args) == 1:
@@ -117,9 +51,6 @@ class Dataframe(Series):
             return False
 
     def iloc(self, rows, cols):
-        """
-
-        """
         if isinstance(rows, int) and isinstance(cols, int):
             return self.data[cols].iloc(rows)
 
@@ -158,9 +89,7 @@ class Dataframe(Series):
 
     def max(self) -> 'Dataframe':
         """
-        Return a single line dataframe with the max value of each column of the original dataframe
-        :parameter: Dataframe
-        :return: Dataframe
+        Get the max value of each column of the dataframe
         """
         column_list = self.data
         data = []
@@ -174,9 +103,7 @@ class Dataframe(Series):
 
     def min(self):
         """
-        Return a single line dataframe with the min value of each column of the original dataframe
-        :parameter: Dataframe
-        :return: Dataframe
+        Get the min value of each column of the dataframe
         """
         column_list = self.data
         data = []
@@ -190,9 +117,7 @@ class Dataframe(Series):
 
     def mean(self):
         """
-        Return a single line dataframe with the mean value of each column of the original dataframe
-        :parameter: Dataframe
-        :return: Dataframe
+        Get the mean value of each column of the dataframe
         """
         column_list = self.data
         data = []
@@ -206,9 +131,7 @@ class Dataframe(Series):
 
     def std(self):
         """
-        Return a single line dataframe with the standard deviation of each column of the original dataframe
-        :parameter: Dataframe
-        :return: Dataframe
+        print the standard deviation of each column of the dataframe
         """
         column_list = self.data
         data = []
@@ -233,7 +156,7 @@ class Dataframe(Series):
 
     def __repr__(self):
         """
-        surcharge de la fonction repr pour afficher un dataframe
+       overloading of the repr function to print a dataframe
         """
         repr_str = f"{self.name}:\n"
         for series in self.data:
@@ -244,10 +167,8 @@ class Dataframe(Series):
 
     def groupby(self, by: List[str] | str, agg: Dict[str, Callable[[List[Any]], Any]]) -> 'Dataframe':
         """
-        Group the dataframe by the given columns and aggregate the other columns using the given functions
-        :param by: the columns to group by
-        :param agg: the aggregation functions to use
-        :return: the grouped dataframe
+        regroup the dataframe by the cols given in the by parameter and aggregate the other columns
+        reminds me of group by from MongoDB
         """
         if isinstance(by, str):
             by = [by]
@@ -279,3 +200,57 @@ class Dataframe(Series):
             new_series.append(Series(new_data, new_name))
 
         return Dataframe(new_series)
+
+    def read_csv(path: str, delimiter: str = ",") -> 'Dataframe':
+        """
+        Read a CSV file and return a Dataframe
+        """
+        try:
+            with open(path, "r") as file:
+                r = csv.reader(file, delimiter=delimiter)
+                headers = next(r)
+                columns = [[] for _ in headers]
+                for row in r:
+                    if len(row) != len(headers):
+                        raise IndexError("Malformed CSV file")
+                    for i, cell in enumerate(row):
+                        columns[i].append(cell)
+                series = [Series(col, name) for col, name in zip(columns, headers)]
+                return Dataframe(series)
+        except IndexError as e:
+            print(f"Error while reading the CSV file: {e}")
+            raise
+
+    @staticmethod
+    def read_json(path: str, orient: str = "records") -> 'Dataframe':
+        """
+        Same as read_csv but for JSON files.
+        """
+        try:
+            with open(path, "r") as file:
+                data = json.load(file)
+
+                if orient == "records":
+                    headers = data[0].keys()
+                    columns = {header: [] for header in headers}
+
+                    for record in data:
+                        if len(record) != len(headers):
+                            raise IndexError("Row has different number of columns than the headers.")
+
+                        for key, value in record.items():
+                            columns[key].append(value)
+
+                    series = [Series(col, name) for name, col in columns.items()]
+
+                elif orient == "columns":
+                    series = [Series(values, name) for name, values in data.items()]
+
+                else:
+                    raise ValueError(f"Unsupported JSON orientation: {orient}")
+
+                return Dataframe(series)
+
+        except IndexError as e:
+            print(f"Error reading JSON file: {e}")
+            raise
