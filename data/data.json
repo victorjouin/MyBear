@@ -1,0 +1,7 @@
+[
+    {"Age": 25, "Name": "John", "Country": "USA", "Job": "Engineer", "Salary": 70000},
+    {"Age": 30, "Name": "Emma", "Country": "Canada", "Job": "Doctor", "Salary": 80000},
+    {"Age": 35, "Name": "Sophie", "Country": "Australia", "Job": "Teacher", "Salary": 60000},
+    {"Age": 40, "Name": "Mike", "Country": "USA", "Job": "Lawyer", "Salary": 90000},
+    {"Age": 45, "Name": "David", "Country": "UK", "Job": "Engineer", "Salary": 85000}
+]

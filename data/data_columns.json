@@ -1,0 +1,7 @@
+{
+    "Age": [25, 30, 35, 40, 45],
+    "Name": ["John", "Emma", "Sophie", "Mike", "David"],
+    "Country": ["USA", "Canada", "Australia", "USA", "UK"],
+    "Job": ["Engineer", "Doctor", "Teacher", "Lawyer", "Engineer"],
+    "Salary": [70000, 80000, 60000, 90000, 85000]
+}
