@@ -1,6 +1,6 @@
 import csv
 import json
-from typing import Any, List, Dict, Callable
+from typing import Any, List, Dict, Callable, Union
 from .series import Series
 import numpy as np
 
@@ -35,6 +35,9 @@ class DataFrame:
                 [Series([self.data[s].data[i]], self.data[s].name) for s in range(*j.indices(len(self.data)))])
         else:
             return self.data[j].data[i]
+
+    def __str__(self):
+        return "\n".join(f"{s.name}: {s.data}" for s in self.data)
 
     @staticmethod
     def read_csv(path: str, delimiter: str = ",") -> 'DataFrame':
@@ -85,3 +88,49 @@ class DataFrame:
             if s1.name != s2.name or s1.data != s2.data:
                 return False
         return True
+
+    def join(
+            self,
+            other: 'DataFrame',
+            left_on: Union[List[str], str],
+            right_on: Union[List[str], str],
+            how: str = "left"
+    ) -> 'DataFrame':
+
+        if isinstance(left_on, str):
+            left_on = [left_on]
+        if isinstance(right_on, str):
+            right_on = [right_on]
+
+        left_indices = [self.columns.index(col) for col in left_on]
+        right_indices = [other.columns.index(col) for col in right_on]
+
+        joined_rows = []
+        for left_row in zip(*[s.data for s in self.data]):
+            left_key = tuple(left_row[i] for i in left_indices)
+            for right_row in zip(*[s.data for s in other.data]):
+                right_key = tuple(right_row[i] for i in right_indices)
+                if left_key == right_key:
+                    # Exclude the join columns from the right dataframe no Double columns allowed
+                    joined_rows.append(
+                        left_row + tuple(value for i, value in enumerate(right_row) if i not in right_indices))
+                    break
+            else:
+                if how in {"left", "outer"}:
+                    joined_rows.append(left_row + tuple(None for _ in other.data))
+
+        if how in {"right", "outer"}:
+            for right_row in zip(*[s.data for s in other.data]):
+                right_key = tuple(right_row[i] for i in right_indices)
+                if not any(right_key == tuple(left_row[i] for i in left_indices) for left_row in
+                           zip(*[s.data for s in self.data])):
+                    joined_rows.append(tuple(None for _ in self.data) + right_row)
+
+        # No Double columns allowed
+        other_columns = [col for col in other.columns if col not in right_on]
+        joined_columns = self.columns + other_columns
+
+        joined_data = list(zip(*joined_rows))
+        joined_data = [list(col_data) for col_data in zip(*joined_rows)]
+        return DataFrame([Series(col_data, col_name) for col_data, col_name in zip(joined_data, joined_columns)])
+

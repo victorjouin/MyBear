@@ -49,8 +49,11 @@ class Series:
         return count
 
     def __eq__(self, other):
-        if isinstance(other, Series):
-            return self.data == other.data
-        return False
+        if not isinstance(other, Series):
+            return False
+        if self.name != other.name or self.data != other.data:
+            return False
+        return True
+
 
 

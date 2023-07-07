@@ -4,42 +4,43 @@ from lib.mybear.series import Series
 
 
 def test_max():
-    series1 = Series([1, 2, 3], "A")
-    series2 = Series([4, 5, 6], "B")
+    series1 = Series([10, 12, 33], "A")
+    series2 = Series([4, 52, 63], "B")
     series_list = [series1, series2]
     df = Dataframe(series_list)
     max_df = df.max()
-    assert max_df.data[0].data == [3]
-    assert max_df.data[1].data == [6]
+    assert max_df.data[0].data == [33]
+    assert max_df.data[1].data == [63]
+
 
 def test_min():
-    series1 = Series([1, 2, 3], "A")
-    series2 = Series([4, 5, 6], "B")
+    series1 = Series([10, 12, 33], "A")
+    series2 = Series([4, 52, 63], "B")
     series_list = [series1, series2]
     df = Dataframe(series_list)
     min_df = df.min()
-    assert min_df.data[0].data == [1]
+    assert min_df.data[0].data == [10]
     assert min_df.data[1].data == [4]
 
 
 def test_mean():
-    series1 = Series([1, 2, 3], "A")
-    series2 = Series([4, 5, 6], "B")
+    series1 = Series([1, 2, 4, 3], "A")
+    series2 = Series([4, 5, 6, 7], "B")
     series_list = [series1, series2]
     df = Dataframe(series_list)
     mean_df = df.mean()
-    assert mean_df.data[0].data == [2]
-    assert mean_df.data[1].data == [5]
+    assert mean_df.data[0].data == [2.5]
+    assert mean_df.data[1].data == [5.5]
 
 
 def test_count():
-    series1 = Series([1, 2, 3], "A")
-    series2 = Series([4, 5, 6], "B")
+    series1 = Series([1, 2, 3, 4, 5], "A")
+    series2 = Series([4, 5, 6, 7, 8, 9], "B")
     series_list = [series1, series2]
     df = Dataframe(series_list)
     count_df = df.count()
-    assert count_df.data[0].data == [3]
-    assert count_df.data[1].data == [3]
+    assert count_df.data[0].data == [5]
+    assert count_df.data[1].data == [6]
 
 
 def test_std():
@@ -82,6 +83,7 @@ def test_iloc():
     assert result_df.data[1].name == "B"
     assert result_df.data[1].data == [4, 5]
 
+
 def test_dataframe_equality():
     series1 = Series([1, 2, 3], "A")
     series2 = Series([4, 5, 6], "B")
@@ -117,6 +119,7 @@ def test_read_json():
     assert df.data[2].data == ["Doctor", "Engineer", "Teacher"]
     assert df1.data[2].data == ["Doctor", "Engineer", "Teacher"]
 
+
 def test_groupby():
     series1 = Series([1, 2, 3, 4, 5, 1, 1, 1, 2, 3], "A")
     series2 = Series([10, 20, 30, 40, 50, 60, 70, 80, 90, 100], "B")
@@ -135,3 +138,25 @@ def test_groupby():
     assert grouped_df.data[0].data == [1, 2, 3, 4, 5]
     assert grouped_df.data[1].data == [10, 20, 30, 40, 50]
     assert grouped_df.data[2].data == [800, 900, 1000, 400, 500]
+
+
+def test_join():
+    df1 = Dataframe([
+        Series([1, 2, 3], 'id'),
+        Series(['Alice', 'Bob', 'Charlie'], 'name')
+    ])
+    df2 = Dataframe([
+        Series([2, 3, 4], 'id'),
+        Series(['English', 'Math', 'Science'], 'subject')
+    ])
+
+    joined = df1.join(df2, left_on='id', right_on='id')
+
+    expected = Dataframe([
+        Series([1, 2, 3], 'id'),
+        Series(['Alice', 'Bob', 'Charlie'], 'name'),
+        Series([None, 'English', 'Math'], 'subject')
+    ])
+
+    assert joined == expected
+    assert joined == expected
