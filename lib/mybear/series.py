@@ -35,6 +35,7 @@ class Series:
 
     # cart type bref l'homogénéité des données
     def std(self):
+    # This function returns the standard deviation of the data
         mean = self.mean()
         var = 0
         for i in self.data:

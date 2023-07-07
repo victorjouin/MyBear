@@ -18,8 +18,8 @@ def test_series_mean():
 
 
 def test_series_std():
-    series = Series([1, 2, 3, 4, 5], "Test std")
-    assert series.std() == pytest.approx(1.4142135623730951)
+    series = Series([1, 2, 3, 4, 5, 6, 7], "Test std")
+    assert series.std() == pytest.approx(2.0)
 
 
 def test_series_count():
