@@ -1,4 +1,6 @@
-Name,Age,Occupation
-Alice,30,Doctor
-Bob,25,Engineer
-Charlie,35,Teacher
+Age,Name,Country,Job,Salary
+25,John,USA,Engineer,70000
+30,Emma,Canada,Doctor,80000
+35,Sophie,Australia,Teacher,60000
+40,Mike,USA,Lawyer,90000
+45,David,UK,Engineer,85000

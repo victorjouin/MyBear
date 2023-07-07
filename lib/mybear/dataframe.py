@@ -41,10 +41,20 @@ class DataFrame:
 
     @staticmethod
     def read_csv(path: str, delimiter: str = ",") -> 'DataFrame':
+        def try_convert_to_number(s):
+            try:
+                return int(s)
+            except ValueError:
+                try:
+                    return float(s)
+                except ValueError:
+                    return s
+
         with open(path, 'r') as f:
             reader = csv.reader(f, delimiter=delimiter)
             data = list(reader)
-            series = [Series([row[i] for row in data[1:]], data[0][i]) for i in range(len(data[0]))]
+            series = [Series([try_convert_to_number(row[i]) for row in data[1:]], data[0][i])
+                      for i in range(len(data[0]))]
             return DataFrame(series)
 
     @staticmethod
@@ -77,7 +87,8 @@ class DataFrame:
                 col_index = self.columns.index(col)
                 new_row.append(func([row[col_index] for row in rows]))
             new_rows.append(new_row)
-        return DataFrame([Series([row[i] for row in new_rows], name) for i, name in enumerate(self.columns)])
+        new_columns = list(by) + list(agg.keys())
+        return DataFrame([Series([row[i] for row in new_rows], name) for i, name in enumerate(new_columns)])
 
     def __eq__(self, other):
         if not isinstance(other, DataFrame):
