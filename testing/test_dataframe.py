@@ -93,7 +93,7 @@ def test_dataframe_equality():
 
 
 def test_read_csv():
-    df = Dataframe.read_csv("./data.csv")
+    df = Dataframe.read_csv("../data/data.csv")
     column_names = [series.name for series in df.data]
     assert column_names == ["Name", "Age", "Occupation"]
     assert df.data[0].data == ["Alice", "Bob", "Charlie"]
@@ -102,8 +102,8 @@ def test_read_csv():
 
 
 def test_read_json():
-    df = Dataframe.read_json("./data_col.json", orient="columns")
-    df1 = Dataframe.read_json("./data_records.json", orient="records")
+    df = Dataframe.read_json("../data/data_col.json", orient="columns")
+    df1 = Dataframe.read_json("../data/data_records.json", orient="records")
     column_names = [series.name for series in df.data]
     column_names1 = [series.name for series in df1.data]
     assert len(df.data) == 3
